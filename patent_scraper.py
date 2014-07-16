@@ -28,7 +28,7 @@ def filter_text (raw_text, st_pt, end_pt):
     return raw_text[st + len(st_pt) : end]
     
 
-def scrape_patents (df):
+def scrape_patents (pat_list):
     titles = []
     inventors = []
     references = []
@@ -36,7 +36,7 @@ def scrape_patents (df):
     claims = []
     descriptions = []
     
-    for pn in df['pat_num']:
+    for pn in pat_list:
         url = 'http://www.freepatentsonline.com/' + str(pn) + '.html'
         r = requests.get(url)
         soup = BeautifulSoup(r.text)
