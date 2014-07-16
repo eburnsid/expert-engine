@@ -2,8 +2,8 @@
 This module is for converting existing .csv files containing patent data into usable SQL tables in the 'patents' database. These tables will include:
 
 * 'cpcs': a table mapping all patent numbers to their respective Cooperative Patent Classification (CPC) codes, with one row for each pairing of patent number to code and each patent number having at least one but likely many codes
-* 'exp_to_pat': a table mapping experts to the patents on which they have previously testified, with one row for each pairing of expert to patent and the possibility of seeing both experts and patents repeated
-* 'cpc_exps': a subset of 'cpcs' that will contain only those patent numbers that are currently tied to an expert witness
+* 'experts': a table mapping experts to the patents on which they have previously testified, with one row for each pairing of expert to patent and the possibility of seeing both experts and patents repeated
+* 'exp_cpcs': a subset of 'cpcs' that will contain only those patent numbers that are currently tied to an expert witness
 
 '''
 
@@ -42,7 +42,7 @@ def create_ctp (ctp_data_file):
     return df_ctp
 
 
-def add_to_etp (ctp_data_file, etc_data_file):
+def add_to_experts (ctp_data_file, etc_data_file):
     df_ctp = create_ctp(ctp_data_file)
     df_etc = pd.read_csv(etc_data_file)
     
@@ -50,9 +50,9 @@ def add_to_etp (ctp_data_file, etc_data_file):
     df.drop('case', axis = 1, inplace = True)
     
     engine = create_engine('postgresql://erinburnside:@localhost/patents')
-    df.to_sql('exp_to_pat', engine)
-    
-            
+    df.to_sql('experts', engine)
+
+               
 if __name__ == '__main__':
 	conn = psycopg2.connect(database = 'patents', user = 'postgres')
 	cur = conn.cursor()
@@ -61,6 +61,8 @@ if __name__ == '__main__':
 	conn.commit()
 
 	add_to_cpcs('data/pat_to_cpc_mini.csv', 4291218)
-    add_to_etp('data/case_to_pat.csv', 'data/record_to_case.csv')
+    add_to_experts('data/case_to_pat.csv', 'data/record_to_case.csv')
     
-    
+    exp_cpc_query = "CREATE TABLE exp_cpcs AS (SELECT * FROM cpcs WHERE pat_num IN (SELECT pat_num FROM experts));"
+    cur.execute(exp_cpc_query)
+    conn.commit()    
