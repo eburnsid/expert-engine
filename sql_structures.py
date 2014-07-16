@@ -11,6 +11,7 @@ This module is for converting existing .csv files containing patent data into us
 import pandas as pd
 import psycopg2
 import csv
+from sqlalchemy import create_engine
 
 
 def add_to_cpcs (data_file, cutoff):
@@ -27,7 +28,31 @@ def add_to_cpcs (data_file, cutoff):
             ii += 1    
 
 
+def create_ctp (ctp_data_file):
+    ctp_list = []
+    
+    with open(data_file, 'r') as csvfile:
+        pat_reader = csv.reader(csvfile, delimiter = '|')
+        next(pat_reader)
+        for row in pat_reader:
+            case_num = row[0][:-1]
+            ctp_list = ctp_list + [(case_num, int(pat_num)) for pat_num in row[1:-1]]
 
+    df_ctp = pd.DataFrame(ctp_list, columns = ['case_num','pat_num'])
+    return df_ctp
+
+
+def add_to_etp (ctp_data_file, etc_data_file):
+    df_ctp = create_ctp(ctp_data_file)
+    df_etc = pd.read_csv(etc_data_file)
+    
+    df = df_ctp.merge(df_rtc, left_on = 'case_num', right_on = 'case')
+    df.drop('case', axis = 1, inplace = True)
+    
+    engine = create_engine('postgresql://erinburnside:@localhost/patents')
+    df.to_sql('exp_to_pat', engine)
+    
+            
 if __name__ == '__main__':
 	conn = psycopg2.connect(database = 'patents', user = 'postgres')
 	cur = conn.cursor()
@@ -36,3 +61,6 @@ if __name__ == '__main__':
 	conn.commit()
 
 	add_to_cpcs('data/pat_to_cpc_mini.csv', 4291218)
+    add_to_etp('data/case_to_pat.csv', 'data/record_to_case.csv')
+    
+    
