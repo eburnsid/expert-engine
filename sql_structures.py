@@ -22,6 +22,8 @@ in the 'patents' database. These tables will include:
 * 'references': A table mapping all patents with an associated expert to each of the patents
     that they cite as references. Most patents have multiple references, and some references may 
     occur multiple times.
+* 'levels' : A table with all CPC codes in order and the "level" of each code. The level indicates
+    how granular the code is intended to be and which codes are considered subsets of other codes.
 
 '''
 
@@ -100,6 +102,12 @@ def add_pat_text_tables(df, pat_column, engine):
     
     create_one_to_many(df, 'pat_num', 'inventors').to_sql('inventors', engine)
     create_one_to_many(df, 'pat_num', 'refs').to_sql('references', engine)
+
+    
+def add_cpc_levels (data_file, engine):
+    df_levels = pd.read_csv(data_file)
+    df_levels.drop('id', axis = 1, inplace = True)
+    df_levels.to_sql('levels', engine)
     
                
 if __name__ == '__main__':
@@ -109,5 +117,4 @@ if __name__ == '__main__':
     df_ctp = add_to_experts('data/case_to_pat.csv', 'data/record_to_case.csv', engine)
     
     add_pat_text_tables(df_ctp, 'pat_num', engine)
-    
-    
+    add_cpc_levels('/data/cpc_table.csv', engine)
