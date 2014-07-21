@@ -25,7 +25,7 @@ in the 'patents' database. These tables will include:
 * 'levels' : A table with all CPC codes in order and the "level" of each code. The level indicates
     how granular the code is intended to be and which codes are considered subsets of other codes.
 
-© 2014 Erin Burnside
+(C) 2014 Erin Burnside
 '''
 
 

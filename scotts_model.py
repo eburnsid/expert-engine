@@ -2,7 +2,7 @@
 Implements the initial model devised by Scott to compute similarity scores for
 patents based on CPC codes. 
 
-© 2014 Erin Burnside
+(C) 2014 Erin Burnside
 '''
 
 import psycopg2
