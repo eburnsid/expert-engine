@@ -11,7 +11,7 @@ Intellectual Property Notice and Ownership
 
 This project is subject to U.S. Patent Application Number 61973202. 
 
-Scott Sherwin and Erin Burnside and agree to assign (including executing any necessary formal documents) all intellectual property rights (including copyright, patent, and trademark rights) created during the scope of this project to Expert Engine upon its formation.
+Scott Sherwin and Erin Burnside agree to assign (including executing any necessary formal documents) all intellectual property rights (including copyright, patent, and trademark rights) created during the scope of this project to Expert Engine upon its formation.
 
 Neither the name Expert Engine nor the names of its contributors may be used to endorse or promote products related to this software without specific prior written permission.
 
