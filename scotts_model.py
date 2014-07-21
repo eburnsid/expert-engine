@@ -11,7 +11,15 @@ import basic_model
 
 
 def scotts_model ():
+'''
+INPUT: NONE
+OUTPUT: INT cost
+
+Runs the basic model using Scott's parameters (10 points for each level except "scheme,"
+which gives 30 points.)
+'''
     params = [10 for ii in range(17)]
+    params[3] = 30
     return basic_model.cost_function(params, max)
     
 
