@@ -1,3 +1,11 @@
+'''
+Collects and formats online patent data (title, inventors, abstract, claims, description, 
+references).
+
+© 2014 Erin Burnside
+'''
+
+
 import pandas as pd
 import psycopg2
 import csv

@@ -1,4 +1,12 @@
+'''
+Implements the initial model devised by Scott to compute similarity scores for
+patents based on CPC codes. 
+
+© 2014 Erin Burnside
+'''
+
 import psycopg2
+import numpy as np
 
 
 def get_cpc (pat_num, cur, table = "cpcs"):
@@ -79,28 +87,53 @@ def compute_score (pat_1, pat_2, cur, table = "cpcs"):
     return scores
 
 
-def predict_expert (pat_num, table = "cpcs"):
+def predict_expert (pat_num, table = "cpcs", testing = False):
     conn = psycopg2.connect(database = 'patents', user = 'postgres')
     cur = conn.cursor()
     
     query = "SELECT pat_num FROM exp_cpcs GROUP BY pat_num;"
     cur.execute(query)
+    if testing == True:
+        training_patents = [pat[0] for pat in cur.fetchall()]
+        training_patents.remove(pat_num)
     
     max_scores = []
-    for pat_num_2 in cur.fetchall():
-        max_scores.append((pat_num_2, max(compute_score(pat_num, pat_num_2, cur, table = table))))
+    for pat_num_2 in training_patents:
+        max_scores.append((pat_num_2, np.mean(compute_score(pat_num, pat_num_2, cur, table = table))))
     
     max_scores.sort(key = lambda x: x[1], reverse = True)
-    print max_scores
     
     experts = []
     for (patent, score) in max_scores[:10]:
-        print patent
         query = "SELECT record FROM experts WHERE pat_num = %s;"
         cur.execute(query, [patent])
         experts += [(int(expert[0]), score) for expert in cur.fetchall() if expert[0] \
                     not in [exp[0] for exp in experts]]                    
     return experts
 
+
+def cost_function (prediction_function):
+    conn = psycopg2.connect(database = 'patents', user = 'postgres')
+    cur = conn.cursor()
+    
+    query = 'SELECT * FROM one_expert_pats AS oep \
+                JOIN many_pat_experts AS mpe ON oep.index = mpe.index;'
+    cur.execute(query)
+    
+    cost = 0
+    tested = 0
+    for star in cur.fetchall():
+        tested += 1
+        test_patent = star[1]
+        print test_patent
+        matches = prediction_function(test_patent, table = "exp_cpcs", testing = True)
+        if star[2] not in [match[0] for match in matches[:5]]:
+            cost += 1
+            print matches[0][0]
+            print star[2]
+    
+    return cost, tested
+    
+
 if __name__ == "__main__":
-    print predict_expert (5012813, table = "exp_cpcs")
+    print cost_function (predict_expert)
