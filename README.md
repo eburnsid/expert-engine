@@ -13,12 +13,27 @@ that the service can be not only faster than the traditional method of
 finding an expert but also guarantee the recommendation of highly 
 qualified people.
 
+
+
+
 Files contained in this repo:
 
-### reference_scraper.py
+#### basic_model.py
+The framework of Scott's original CPC-based model, with the ability to 
+alter the parameters and aggregation of groups of CPC scores.
+
+#### cost_function.py
+Computes the cost associated with a given model of predicting experts. 
+The cost in this case is defined as the sum of the list indices where 
+each "true" expert for a patent is found in the predictions for that
+patent.
+
+#### reference_scraper.py
 Used for scraping networks of patent citations for eventual use in 
 SimRank algorithm. Collects patent numbers of both in and out references 
 and inserts these into SQL tables.
+
+
 
 
 Intellectual Property Notice and Ownership
