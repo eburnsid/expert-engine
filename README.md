@@ -32,6 +32,10 @@ Used for scraping networks of patent citations for eventual use in
 SimRank algorithm. Collects patent numbers of both in and out references 
 and inserts these into SQL tables.
 
+#### sim_anneal_model.py
+Optimizes parameters of basic model using [simulated annealing]
+optimization.
+
 #### simrank.py
 Implements [SimRank] using [matrix operations]. 
 
@@ -53,5 +57,6 @@ Neither the name Expert Engine nor the names of its contributors may be
 used to endorse or promote products related to this software without 
 specific prior written permission.
 
+[simulated annealing]: http://leonidzhukov.net/hse/2013/stochmod/papers/KirkpatrickGelattVecchi83.pdf
 [simrank]: http://ilpubs.stanford.edu:8090/508/1/2001-41.pdf
 [matrix operations]: http://www.cse.unsw.edu.au/~zhangw/files/wwwj.pdf
