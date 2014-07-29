@@ -32,6 +32,9 @@ Used for scraping networks of patent citations for eventual use in
 SimRank algorithm. Collects patent numbers of both in and out references 
 and inserts these into SQL tables.
 
+#### simrank.py
+Implements [SimRank] using [matrix operations]. 
+
 ------------------------------------------------------------------------
 
 Intellectual Property Notice and Ownership
@@ -50,3 +53,5 @@ Neither the name Expert Engine nor the names of its contributors may be
 used to endorse or promote products related to this software without 
 specific prior written permission.
 
+[simrank]: http://ilpubs.stanford.edu:8090/508/1/2001-41.pdf
+[matrix operations]: http://www.cse.unsw.edu.au/~zhangw/files/wwwj.pdf
