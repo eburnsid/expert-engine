@@ -13,8 +13,7 @@ that the service can be not only faster than the traditional method of
 finding an expert but also guarantee the recommendation of highly 
 qualified people.
 
-
-
+------------------------------------------------------------------------
 
 Files contained in this repo:
 
@@ -33,8 +32,7 @@ Used for scraping networks of patent citations for eventual use in
 SimRank algorithm. Collects patent numbers of both in and out references 
 and inserts these into SQL tables.
 
-
-
+------------------------------------------------------------------------
 
 Intellectual Property Notice and Ownership
 
