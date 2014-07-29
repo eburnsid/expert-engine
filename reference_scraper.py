@@ -17,7 +17,7 @@ import psycopg2
 
 def get_exp_pat_nums (cur):
     '''
-    INPUT: PSYCOPG CURSOR cur
+    INPUT: PSYCOPG2 CURSOR cur
     OUTPUT: LIST OF INTS pat_nums
     
     Pulls list of all patent numbers associated with experts from SQL
@@ -31,7 +31,7 @@ def get_exp_pat_nums (cur):
 
 def get_pending (root, cur):
     '''
-    INPUT: INT root, PSYCOPG CURSOR cur
+    INPUT: INT root, PSYCOPG2 CURSOR cur
     OUTPUT: LIST OF INTS pending_pats
 
     For instances in which the table has been partially filled, this 
@@ -50,7 +50,7 @@ def get_pending (root, cur):
 
 def get_completed (root, cur):
     '''
-    INPUT: INT root, PSYCOPG CURSOR cur
+    INPUT: INT root, PSYCOPG2 CURSOR cur
     OUTPUT: LIST OF INTS completed_pats
 
     For instances in which the table has been partially filled, this 
@@ -115,7 +115,7 @@ def get_referenced (pat_num):
     
 def add_reference (root, ref_in, ref_out, cur, level):
     '''
-    INPUT: INT root, INT ref_in, INT ref_out PSYCOPG CURSOR cur
+    INPUT: INT root, INT ref_in, INT ref_out PSYCOPG2 CURSOR cur
     OUTPUT: NONE
 
     Queries the SQL table with the name "ref_<root>" to insert a row 
@@ -132,7 +132,7 @@ def get_one_network(root, conn, cur, completed_pats=[], pending_pats=[],
                     level=0, max_level=2):
     '''
     INPUT: INT root, LIST OF INTS completed_pats, LIST OF INTS 
-        pending_pats, PSYCOPG CONNECTION conn, PSYCOPG CURSOR cur
+        pending_pats, PSYCOPG2 CONNECTION conn, PSYCOPG2 CURSOR cur
     OUTPUT: NONE
 
     If pending_pats is empty, the root is assumed to be the only pending 
