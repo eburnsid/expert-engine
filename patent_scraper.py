@@ -1,27 +1,34 @@
 '''
-Collects and formats online patent data (title, inventors, abstract, claims, description, 
-references).
+Collects and formats online patent data (title, inventors, abstract, 
+claims, description, references).
 
 (C) 2014 Erin Burnside
 '''
 
 
-import pandas as pd
-import psycopg2
-import csv
+import time
+
 import requests
 from bs4 import BeautifulSoup
-import time
 
 
 def get_meta (soup_object):
+    '''
+    INPUT: BS4 OBJECT soup_object
+    OUTPUT: (LIST OF STRINGS titles, LIST OF STRINGS inventors, 
+        LIST OF STRINGS references) TUPLE
+    
+    Gets relevant content from the "meta" sections of the Beautiful Soup
+    patent object.
+    '''
     titles, inventors, references = [],[],[]
     for meta in soup_object.find_all('meta'):
         attrs = meta.attrs
         if 'scheme' in attrs: 
             if meta['scheme'] == 'inventor':
                 inventors.append(meta['content'])
-            elif meta['scheme'] == 'references' and meta['content'][:2] == 'US':
+            elif (meta['scheme'] == 'references' 
+                  and meta['content'].startswith('US')):
                 references.append(meta['content'])
         elif 'name' in attrs and meta['name'] == 'DC.title':
             titles.append(meta['content']) 
@@ -29,14 +36,30 @@ def get_meta (soup_object):
 
 
 def filter_text (raw_text, st_pt, end_pt):
+    '''
+    INPUT: STRING raw_text, INT st_pt, INT end_pt
+    OUTPUT: STRING filt_text
+    
+    Takes raw text data from scraping a patent website and returns 
+    content between the starting and ending markers.
+    '''
     st = raw_text.find(st_pt)
     if st == -1:
         return ''
     end = raw_text.find(end_pt, st)
-    return raw_text[st + len(st_pt) : end]
-    
+    filt_text = raw_text[(st + len(st_pt)):end]
+    return filt_text
 
 def scrape_patents (pat_list):
+    '''
+    INPUT: LIST OF INTS pat_list
+    OUTPUT: LIST OF STRINGS titles, LIST OF STRINGS inventors, 
+        LIST OF STRINGS references, LIST OF STRINGS abstracts,
+        LIST OF STRINGS claims, LIST OF STRINGS descriptions
+    
+    Scrapes and formats important data (title, inventor(s), references,
+    abstract, claims, and description) for each patent in pat_list.
+    '''
     titles = []
     inventors = []
     references = []
