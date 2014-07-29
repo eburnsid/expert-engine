@@ -27,6 +27,9 @@ The cost in this case is defined as the sum of the list indices where
 each "true" expert for a patent is found in the predictions for that
 patent.
 
+#### patent_scraper.py
+Scrapes and formats relevant patent data.
+
 #### reference_scraper.py
 Used for scraping networks of patent citations for eventual use in 
 SimRank algorithm. Collects patent numbers of both in and out references 
