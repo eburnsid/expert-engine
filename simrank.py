@@ -1,5 +1,9 @@
 '''
-Implementation of SimRank algorithm for patent references.
+Implementation of SimRank algorithm for patent references. SimRank 
+operates under the assumption that if two items are reference by similar
+items that they are also somewhat similar. One of the use cases in the
+initial paper is determining similarity of academic literature; the same
+idea applies to citation of patents.
 
 (C) 2014 Erin Burnside
 '''
@@ -87,10 +91,10 @@ def add_row (conn, pat_num):
     cur = conn.cursor()
     query1 = 'SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS' 
     query1 += " WHERE table_name = 'simrank';"
-    cur2.execute(query1)
-    new_row = tuple([pat_num] + [0 for ii in range(cur2.fetchall()[0][0] - 1)])
+    cur.execute(query1)
+    new_row = tuple([pat_num] + [0 for ii in range(cur.fetchall()[0][0] - 1)])
     query2 = 'INSERT INTO simrank VALUES ' + str(new_row) + ';'
-    cur2.execute(query2)
+    cur.execute(query2)
     conn.commit() 
 
 
@@ -104,7 +108,8 @@ def insert_scores (s, root, pat_arr, conn):
     retrieval.
     '''
     root_index = np.where(pat_arr == root)[0]
-    for (ii, score) in enumerate(s_new[root_index][0]):
+    cur = conn.cursor()
+    for (ii, score) in enumerate(s[root_index][0]):
         pat_num = pat_arr[ii]
         if score != 0:
             query1 = 'SELECT * FROM simrank WHERE pat_num = ' 
@@ -118,7 +123,7 @@ def insert_scores (s, root, pat_arr, conn):
             conn.commit()
 
 
-def simrank (root, conn, c):
+def simrank (root, conn, c, w=None):
     '''
     INPUT: INT root, PSYCOPG2 CONNECTION conn, INT c
     OUTPUT: NONE
@@ -126,8 +131,9 @@ def simrank (root, conn, c):
     Complete calculated of SimRank for a specified root patent with 
     reference network already present in SQL.
     '''
-    w, pat_arr = find_w(root, conn)
-    pickle_arr(w, 'w' + str(root) + '.pkl')
+    if not w:
+        w, pat_arr = find_w(root, conn)
+        pickle_arr(w, 'w' + str(root) + '.pkl')
     
     s_new = np.identity(w.shape[0])
     for ii in range(10):
@@ -136,10 +142,8 @@ def simrank (root, conn, c):
         for jj in range(s_new.shape[0]):
             s_new[jj][jj] = 1
     
-    pickle_arr(s_new, 's' + str(root) + '.pkl')
-    
-    add_col(root, conn)
-    insert_scores(s, root, pat_arr, conn)
+    # add_col(root, conn)
+    insert_scores(s_new, root, pat_arr, conn)
     
 
 if __name__ == "__main__":
