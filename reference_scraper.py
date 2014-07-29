@@ -23,7 +23,6 @@ def get_exp_pat_nums (cur):
     Pulls list of all patent numbers associated with experts from SQL
     and returns this list.
     '''
-    
     query = "SELECT pat_num FROM experts GROUP BY pat_num;"
     cur.execute(query)
     pat_nums = [pat_num[0] for pat_num in cur.fetchall()]
@@ -40,7 +39,6 @@ def get_pending (root, cur):
     pending_pats) that have been identified as linked to the graph but 
     that have not yet had these links investigated. 
     '''
-    
     table_name = 'ref_' + str(root)
     query = 'SELECT ref_out FROM ' + table_name
     query += ' WHERE ref_out NOT IN (SELECT ref_in FROM ' + table_name
@@ -60,7 +58,6 @@ def get_completed (root, cur):
     completed_pats) that have been identified as linked to the graph and 
     had all their links investigated.
     '''
-    
     table_name = 'ref_' + str(root)
     query = 'SELECT ref_in FROM ' + table_name + ' GROUP BY ref_in;'
     cur.execute(query)
@@ -76,7 +73,6 @@ def get_referencers (pat_num):
     Takes any US patent number and returns the patent numbers of all 
     other US patents that cite the given one as a reference.
     '''
-    
     url = 'http://www.freepatentsonline.com/'
     url += 'result.html?sort=relevance&srch=top&query_txt=REFN%2F'
     url += str(pat_num)
@@ -101,7 +97,6 @@ def get_referenced (pat_num):
     Takes any US patent number and returns the patent numbers of all 
     other US patents that are cited by that patent as references.
     '''
-    
     url = 'http://www.freepatentsonline.com/' + str(pat_num) + '.html'
     r = requests.get(url)
     soup = BeautifulSoup(r.text)    
@@ -127,7 +122,6 @@ def add_reference (root, ref_in, ref_out, cur, level):
     linking ref_in (the patent doing the referencing) to ref_out (the 
     patent being referenced).
     '''
-    
     table_name = 'ref_' + str(root)
     query = 'INSERT INTO ' + table_name 
     query += ' (ref_in, ref_out, level) VALUES (%s, %s, %s);'
@@ -154,7 +148,6 @@ def get_one_network(root, conn, cur, completed_pats=[], pending_pats=[],
     function is called recursively using the updated pending and 
     completed patent lists.
     '''
-    
     if level > max_level:
         return
     
