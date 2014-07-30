@@ -143,7 +143,7 @@ def compute_scores (cpcs_1, pat_2, cur, params, table_2='cpcs'):
     return scores
 
 
-def predict_expert (pat_num, params, agg_func, table='cpcs', testing=False):
+def predict_expert (test_pat, params, agg_func, table='cpcs', testing=False):
     '''
     INPUT: INT pat_num, LIST OF FLOATS params, FUNCTION NAME agg_func,
         optional STRING table, optional BOOLEAN testing
@@ -159,14 +159,14 @@ def predict_expert (pat_num, params, agg_func, table='cpcs', testing=False):
     conn = psycopg2.connect(database='patents', user='postgres')
     cur = conn.cursor()
     
-    cpcs_1 = get_cpc(pat_num, cur, table)
+    cpcs_1 = get_cpc(test_pat, cur, table)
     
     query = 'SELECT pat_num FROM exp_cpcs GROUP BY pat_num;'
     cur.execute(query)
     training_patents = [pat[0] for pat in cur.fetchall()]
     
     if testing:
-        training_patents.remove(pat_num)
+        training_patents.remove(test_pat)
     
     agg_scores = []
     for pat_num_2 in training_patents:
