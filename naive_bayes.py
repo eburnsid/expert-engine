@@ -11,6 +11,8 @@ from sklearn.naive_bayes import MultinomialNB
 import numpy as np
 import psycopg2
 
+import patent_scraper
+
 
 def grab_all_text (text_table, expert_table, cur, test_pat):
     '''
@@ -83,21 +85,19 @@ def predict_expert (text_table, expert_table, test_pat, cur):
     the experts that are most likely to be a good match for the patent
     test_pat.
     '''
-    query = 'SELECT * FROM ' + text_table + ' WHERE pat_num = '
-    query += str(test_pat) + ';'
-    cur.execute(query)
-    
-    line = cur.fetchall()
-    raw_text = [line[0][3] + ' ' + line[0][4] + ' ' + line[0][5]]
+    t, i, r, abstr, cl, descr = patent_scraper.scrape_patents([test_pat])
+    raw_text = ' '.join([abstr[0], cl[0], descr[0]])
     
     tfidf_vect, nb_clf, df_text = naive_bayes(text_table, expert_table, test_pat, cur)
     
-    tfidf_text = tfidf_vect.transform(raw_text) 
-    df_exp = pd.DataFrame(nb_clf.classes_, columns=['experts'], 
-                          index = nb_clf.classes_)
-    df_exp['probs'] = nb_clf.predict_proba(tfidf_text)[0]
-    
-    experts = [(row[0],row[1]) for (index, row) in df_exp.iterrows()]
+    tfidf_text = tfidf_vect.transform([raw_text])
+    # df_exp = pd.DataFrame(nb_clf.classes_, columns=['experts'],
+    #                       index = nb_clf.classes_)
+    # df_exp['probs'] = nb_clf.predict_proba(tfidf_text)[0]
+    classes = nb_clf.classes_
+    probs = nb_clf.predict_proba(tfidf_text)[0]
+
+    experts = [(classes[ii], probs[ii]) for ii in range(len(classes))]
     experts.sort(key=lambda x: x[1], reverse=True)
 
     return experts
