@@ -27,6 +27,9 @@ Scrapes and formats relevant patent data.
 #### reference_scraper.py
 Used for scraping networks of patent citations for eventual use in SimRank algorithm. Collects patent numbers of both in and out references and inserts these into SQL tables.
 
+#### scotts_model.py
+Subset of basic_model that uses parameters and aggregation specified in original documentation for Expert Engine.
+
 #### sim_anneal_model.py
 Optimizes parameters of basic model using [simulated annealing] optimization.
 
