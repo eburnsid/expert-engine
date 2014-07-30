@@ -19,7 +19,7 @@ Combines the scores from basic_model, naive_bayes and simrank into a single pred
 Computes the cost associated with a given model of predicting experts. The cost in this case is defined as the sum of the list indices where each "true" expert for a patent is found in the predictions for thatpatent.
 
 #### naive_bayes.py
-Returns expert predictions based on basic [multinomial naive Bayes]with [TF-IDF vectorizer].
+Returns expert predictions based on basic [multinomial naive Bayes] with [TF-IDF vectorizer].
 
 #### patent_scraper.py
 Scrapes and formats relevant patent data.
