@@ -27,13 +27,17 @@ The cost in this case is defined as the sum of the list indices where
 each "true" expert for a patent is found in the predictions for that
 patent.
 
+#### naive_bayes.py
+Returns expert predictions based on basic [multinomial naive Bayes]
+with [TF-IDF vectorizer].
+
 #### patent_scraper.py
 Scrapes and formats relevant patent data.
 
 #### reference_scraper.py
 Used for scraping networks of patent citations for eventual use in 
-SimRank algorithm. Collects patent numbers of both in and out references 
-and inserts these into SQL tables.
+SimRank algorithm. Collects patent numbers of both in and out
+references and inserts these into SQL tables.
 
 #### sim_anneal_model.py
 Optimizes parameters of basic model using [simulated annealing]
@@ -60,6 +64,8 @@ Neither the name Expert Engine nor the names of its contributors may be
 used to endorse or promote products related to this software without 
 specific prior written permission.
 
+[multinomial naive bayes]: http://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.MultinomialNB.html
+[tf-idf vectorizer]: http://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
 [simulated annealing]: http://leonidzhukov.net/hse/2013/stochmod/papers/KirkpatrickGelattVecchi83.pdf
 [simrank]: http://ilpubs.stanford.edu:8090/508/1/2001-41.pdf
 [matrix operations]: http://www.cse.unsw.edu.au/~zhangw/files/wwwj.pdf
