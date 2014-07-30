@@ -3,6 +3,8 @@ expert-engine
 
 Expert Engine is a search engine for patent attorneys to find the most appropriate people to serve as expert witnesses. At present, attorneys must rely on their own personal networks to find experts. This is inefficient and does not necessarily guarantee a strong pairing of experts with cases. Expert Engine seeks to eliminate these inefficiencies. The model currently responsible for recommending them is very simple and does not take advantage of all of the rich data that patents offer. The code here is intended to improve the algorithm so that the service can be not only faster than the traditional method of finding an expert but also guarantee the recommendation of highly qualified people.
 
+The finished model combines the results from three measures: the original basic model with optimized features (basic_model.py with params determined by sim_anneal_model.py), predicted probabilities by naive Bayes analysis of a bag of words derived from patent contents (naive_bayes.py), and similarity of patents using SimRank (simrank.py). All three models are based on the idea that data about patents that experts have previously worked on is a good stand-in for data about the experts themselves, which is not always available.
+
 ------------------------------------------------------------------------
 
 Files contained in this repo:
