@@ -12,6 +12,9 @@ Files contained in this repo:
 #### basic_model.py
 The framework of Scott's original CPC-based model, with the ability to alter the parameters and aggregation of groups of CPC scores.
 
+#### combo_model.py
+Combines the scores from basic_model, naive_bayes and simrank into a single predictor.
+
 #### cost_function.py
 Computes the cost associated with a given model of predicting experts. The cost in this case is defined as the sum of the list indices where each "true" expert for a patent is found in the predictions for thatpatent.
 
