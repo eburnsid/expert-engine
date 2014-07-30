@@ -37,15 +37,15 @@ import patent_scraper
 
 
 def add_to_cpcs (data_file, cutoff):
-'''
-INPUT: STRING data_file, INT cutoff
-OUTPUT: NONE
+    '''
+    INPUT: STRING data_file, INT cutoff
+    OUTPUT: NONE
 
-Adds rows to cpcs table in SQL by pulling the CPCs corresponding to each
-patent from data_file. Only pulls CPCs from patents after row number cutoff
-in the file, with the assumption that very early patents will not be
-involved in litigation.
-'''
+    Adds rows to cpcs table in SQL by pulling the CPCs corresponding to each
+    patent from data_file. Only pulls CPCs from patents after row number cutoff
+    in the file, with the assumption that very early patents will not be
+    involved in litigation.
+    '''
     conn = psycopg2.connect(database = 'patents', user = 'postgres')
     cur = conn.cursor()
     
@@ -63,13 +63,13 @@ involved in litigation.
 
 
 def create_ctp (ctp_data_file):
-'''
-INPUT: STRING ctp_data_file
-OUTPUT: PANDAS DATAFRAME df_ctp
+    '''
+    INPUT: STRING ctp_data_file
+    OUTPUT: PANDAS DATAFRAME df_ctp
 
-Used to create dataframe (ctp, or case-to-patent) that links each 
-court case to one or more patents.
-'''
+    Used to create dataframe (ctp, or case-to-patent) that links each 
+    court case to one or more patents.
+    '''
     ctp_list = []
     
     with open(data_file, 'r') as csvfile:
@@ -84,13 +84,13 @@ court case to one or more patents.
 
 
 def add_to_experts (ctp_data_file, etc_data_file, engine):
-'''
-INPUT: STRING ctp_data_file, STRING etc_data_file, SQLALCHEMY ENGINE engine
-OUTPUT: PANDAS DATAFRAME df_ctp
+    '''
+    INPUT: STRING ctp_data_file, STRING etc_data_file, SQLALCHEMY ENGINE engine
+    OUTPUT: PANDAS DATAFRAME df_ctp
 
-Merges case-to-patent dataframe with expert-to-case dataframe to get all
-expert-patent pairs. Converts this new, merged dataframe to a SQL table.
-'''
+    Merges case-to-patent dataframe with expert-to-case dataframe to get all
+    expert-patent pairs. Converts this new, merged dataframe to a SQL table.
+    '''
     df_ctp = create_ctp(ctp_data_file)
     df_etc = pd.read_csv(etc_data_file)
     
@@ -103,26 +103,26 @@ expert-patent pairs. Converts this new, merged dataframe to a SQL table.
     
 
 def use_scraper(df, pat_column):
-'''
-INPUT: PANDAS DATAFRAME df, STRING pat_column
-OUTPUT: NONE
+    '''
+    INPUT: PANDAS DATAFRAME df, STRING pat_column
+    OUTPUT: NONE
 
-Takes existing dataframe with one row per patent of interest, pulls data about
-each of the patents using the patent_scraper module, and adds this new information
-back to the dataframe.
-'''
+    Takes existing dataframe with one row per patent of interest, pulls data about
+    each of the patents using the patent_scraper module, and adds this new information
+    back to the dataframe.
+    '''
     pat_list = df[pat_column].tolist()
     df['titles'], df['inventors'], df['refs'], df['abstr'], df['claims'], df['descr'] = patent_scraper.scrape_patents(pat_list)
     
 
 def create_one_to_many (df, one_col, many_col):
-'''
-INPUT: PANDAS DATAFRAME df, STRING one_col, STRING many_col
-OUTPUT: PANDAS DATAFRAME df_otm
+    '''
+    INPUT: PANDAS DATAFRAME df, STRING one_col, STRING many_col
+    OUTPUT: PANDAS DATAFRAME df_otm
 
-Take a dataframe containing a list column (many_col) and create
-a new dataframe with one row for each item in the list.
-'''
+    Take a dataframe containing a list column (many_col) and create
+    a new dataframe with one row for each item in the list.
+    '''
     otm_list = []
     
     for ii, one in enumerate(df[one_col]):
@@ -134,13 +134,13 @@ a new dataframe with one row for each item in the list.
 
     
 def add_pat_text_tables(df, pat_column, engine):
-'''
-INPUT: PANDAS DATAFRAME df, STRING pat_column, SQLALCHEMY ENGINE engine
-OUTPUT: NONE
+    '''
+    INPUT: PANDAS DATAFRAME df, STRING pat_column, SQLALCHEMY ENGINE engine
+    OUTPUT: NONE
 
-Take dataframe produced from scraped patent data and convert it to a 
-SQL table.
-'''
+    Take dataframe produced from scraped patent data and convert it to a 
+    SQL table.
+    '''
     use_scraper(df, pat_column) 
     
     df_text = df[['pat_num','titles','abstr','claims','descr']]
@@ -151,14 +151,14 @@ SQL table.
 
     
 def add_cpc_levels (data_file, engine):
-'''
-INPUT: STRING data_file, SQLALCHEMY ENGINE engine
-OUTPUT: NONE
+    '''
+    INPUT: STRING data_file, SQLALCHEMY ENGINE engine
+    OUTPUT: NONE
 
-Create SQL table containing the level information for each of the CPCs in order.
-These levels are used in the algorithm for computing similarity of the "group"
-portion of the CPC.
-'''
+    Create SQL table containing the level information for each of the CPCs in order.
+    These levels are used in the algorithm for computing similarity of the "group"
+    portion of the CPC.
+    '''
     df_levels = pd.read_csv(data_file)
     df_levels.drop('id', axis = 1, inplace = True)
     df_levels.to_sql('levels', engine)
