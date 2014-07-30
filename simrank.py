@@ -142,10 +142,39 @@ def simrank (root, conn, c, w=None):
         for jj in range(s_new.shape[0]):
             s_new[jj][jj] = 1
     
-    # add_col(root, conn)
+    add_col(root, conn)
     insert_scores(s_new, root, pat_arr, conn)
     
 
+def predict_expert (pat_num, conn):
+    cur = conn.cursor()
+    query = "SELECT column_name FROM information_schema.columns WHERE table_name = 'simrank';"
+    cur.execute(query)
+    col_names = cur.fetchall()
+    col_names.remove(col_names[0])
+        
+    query = 'SELECT * FROM simrank WHERE pat_num = ' + str(pat_num) + ';'
+    cur.execute(query)
+    scores = list(cur.fetchall()[0])
+    scores.remove(scores[0])
+    
+    pat_scores = [(int(col_names[ii][0][4:]), float(score)) for (ii, score) in enumerate(scores)]
+    
+    experts_dict = {}
+    for (pat_num, score) in pat_scores:
+        query = 'SELECT record FROM experts WHERE pat_num = ' + str(pat_num) + ';'
+        cur.execute(query)
+        new_experts = [(int(expert[0]), score) for expert in cur.fetchall()]
+        for (expert, score) in new_experts:
+            if expert not in experts_dict or experts_dict[expert] < score:
+                experts_dict[expert] = score
+                
+    experts = experts_dict.items()
+    experts.sort(key=lambda x: x[1], reverse=True)
+    
+    return experts
+    
+    
 if __name__ == "__main__":
     conn = psycopg2.connect(database = 'patents', user = 'postgres')
     simrank(5352605, conn, 0.8)
