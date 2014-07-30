@@ -148,7 +148,8 @@ def simrank (root, conn, c, w=None):
 
 def predict_expert (pat_num, conn):
     cur = conn.cursor()
-    query = "SELECT column_name FROM information_schema.columns WHERE table_name = 'simrank';"
+    query = "SELECT column_name FROM information_schema.columns "
+    query += "WHERE table_name = 'simrank';"
     cur.execute(query)
     col_names = cur.fetchall()
     col_names.remove(col_names[0])
@@ -158,11 +159,13 @@ def predict_expert (pat_num, conn):
     scores = list(cur.fetchall()[0])
     scores.remove(scores[0])
     
-    pat_scores = [(int(col_names[ii][0][4:]), float(score)) for (ii, score) in enumerate(scores)]
+    pat_scores = [(int(col_names[ii][0][4:]), float(score)) for 
+                  (ii, score) in enumerate(scores)]
     
     experts_dict = {}
     for (pat_num, score) in pat_scores:
-        query = 'SELECT record FROM experts WHERE pat_num = ' + str(pat_num) + ';'
+        query = 'SELECT record FROM experts WHERE pat_num = ' 
+        query += str(pat_num) + ';'
         cur.execute(query)
         new_experts = [(int(expert[0]), score) for expert in cur.fetchall()]
         for (expert, score) in new_experts:
@@ -176,5 +179,5 @@ def predict_expert (pat_num, conn):
     
     
 if __name__ == "__main__":
-    conn = psycopg2.connect(database = 'patents', user = 'postgres')
+    conn = psycopg2.connect(database='patents', user='postgres')
     simrank(5352605, conn, 0.8)
