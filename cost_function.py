@@ -9,10 +9,9 @@ associated value of the cost function.
 import psycopg2
 
 
-def cost_function (params, agg_func, model):
+def cost_function (model, params):
     '''
-    INPUT: LIST OF FLOATS params, FUNCTION NAME agg_func, 
-        FUNCTION NAME model
+    INPUT: FUNCTION NAME model, DICT OF ARGUMENTS params
     OUTPUT: INT cost
     
     Pulls all patents in which the following two conditions are met:
@@ -32,13 +31,10 @@ def cost_function (params, agg_func, model):
     cur.execute(query)
     
     cost = 0
-    tested = 0
     for star in cur.fetchall():
-        tested += 1
-        test_patent = star[1]
-        print test_patent
-        matches = model(test_patent, params, agg_func, table='exp_cpcs', 
-                        testing=True)
+        params['test_pat'] = star[1]
+        print params['test_pat'], star[2]
+        matches = model(**params)
         for (ii, match) in enumerate(matches):
             if match[0] == star[2]:
                 cost += ii
